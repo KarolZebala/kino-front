@@ -1,0 +1,34 @@
+nav {
+  background-color: #001f3f; /* Darker blue color */
+  padding: 10px; /* Add some padding for spacing */
+}
+
+.nav-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  justify-content: space-around; /* Make items take all available space */
+}
+
+.nav-menu-item {
+  flex: 1; /* Make each list item take equal width */
+  text-align: center; /* Center the text */
+}
+
+.nav-menu-item a {
+  text-decoration: none;
+  color: white;
+  display: block; /* Make the entire area clickable */
+  padding: 10px; /* Add padding for better clickability */
+  transition: background-color 0.3s; /* Smooth transition for background color */
+}
+
+.nav-menu-item a:hover {
+  background-color: #003366; /* Darker blue on hover */
+}
+body {
+  background-color: #e6f7ff; /* Use your chosen color here */
+  margin: 0; /* Reset default margin */
+  font-family: 'Arial', sans-serif; /* Set a default font */
+}
