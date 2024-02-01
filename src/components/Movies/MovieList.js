@@ -12,7 +12,6 @@ const MovieList = () => {
     try {
       const searchString = document.querySelector('#search-string').value;
       const jwtToken = sessionStorage.getItem('kinoToken')
-      console.log(searchString)
       const axiosInstance = axios.create({
         baseURL: API_URL,
         headers: {

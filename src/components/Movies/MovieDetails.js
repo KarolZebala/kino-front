@@ -1,23 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import ImageGallery from '../Global/ImageGallery';
 import VideoPlayer from '../Global/VideoPlayer';
 import CommentModal from './CommentModal';
 import ReviewModal from './ReviewModal';
 import './MovieDetails.css'
+import API_URL from '../Global/config';
 const MovieDetails = () => {
   const [movie, setMovie] = useState({})
+  const [isCommentModalOpen, setCommentModalOpen] = useState(false);
+  const [isReviewModalOpen, setReviewModalOpen] = useState(false);
   const { id } = useParams();
   const images = [
     { url: 'https://fwcdn.pl/fpo/10/65/1065/7912491.3.jpg' },
     { url: 'https://a.allegroimg.com/original/11c50f/85ce625b4cd4ad05903657c49673/wladca-pierscieni-powrot-krola' },
   ];
-  const videoUrl = 'file:///C:/Users/karol/Videos/Captures/KarolZębalaFilmZRobotem.mp4'
+  
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await axios.get(`https://localhost:44389/Movie/movie/${id}` );
+        const jwtToken = sessionStorage.getItem('kinoToken')
+       const axiosInstance = axios.create({
+        baseURL: API_URL,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwtToken}`,
+        },
+      });
+
+        const response = await axiosInstance.get(`Movie/movie/${id}` );
         console.log(response)
         setMovie(response.data);
       } catch (error) {
@@ -28,9 +40,51 @@ const MovieDetails = () => {
     fetchMovies();
   }, []);
 
- 
+  const openReviewModal = () => setReviewModalOpen(true);
+  const closeReviewModal = () => setReviewModalOpen(false);   
+  const saveReview = async (review) => {
+    const jwtToken = sessionStorage.getItem('kinoToken')
+       const axiosInstance = axios.create({
+        baseURL: API_URL,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwtToken}`,
+        },
+      });
+      const reviewToCrete = {
+        "author": review.author,
+        "type": review.type,
+        "content": review.content,
+        "grade": review.grade,
+        "movieId": movie.movieId
+      }
+      const response = await axiosInstance.post('MovieReview/create', reviewToCrete);
+      window.location.reload()
+  };
+  const openCommentModal = () => setCommentModalOpen(true);
+  const closeCommentModal = () => setCommentModalOpen(false);
+  const saveComment = async (comment) => {
+    const jwtToken = sessionStorage.getItem('kinoToken')
+       const axiosInstance = axios.create({
+        baseURL: API_URL,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwtToken}`,
+        },
+      });
+      const commentToCrete = {
+        "author": "ja",
+        "content": comment,
+        "movieId": movie.movieId
+      }
+      const response = await axiosInstance.post('MovieComment/create', commentToCrete);
+      window.location.reload()
+  };
   return (
      <div className="movie-container">
+       <Link to={`/movies/edit/${movie.movieId}`}>
+                  {"Edytuj"}
+                </Link> 
       <h2>{movie.movieTitle}</h2>
 
       <div className="section info-section">
@@ -39,11 +93,6 @@ const MovieDetails = () => {
           Reżyser: {movie.director?.directorName} {movie.director?.directorSurname}
         </p>
         <p>Opis: {movie.descripition}</p>
-      </div>
-
-      <div className="section trailer-section">
-        <h3>Trailer</h3>
-        <VideoPlayer videoUrl={videoUrl} />
       </div>
 
       <div className="section movie-version">
@@ -77,6 +126,7 @@ const MovieDetails = () => {
 
       <div className="section comments-section">
         <h3>Komentarze</h3>
+        <button onClick={openCommentModal}>Dodaj Komentarz</button>
         <ul>
           {movie?.movieComents?.map((comment, index) => (
             <li key={index}>
@@ -93,6 +143,7 @@ const MovieDetails = () => {
 
       <div className="section reviews-section">
         <h3>Recenzje</h3>
+        <button onClick={openReviewModal}>Dodaj Recenzję</button>
         <ul>
           {movie?.reviews?.map((review, index) => (
             <li key={index}>
@@ -109,7 +160,10 @@ const MovieDetails = () => {
           ))}
         </ul>
       </div>
+      <CommentModal isOpen={isCommentModalOpen} onClose={closeCommentModal} onSave={saveComment} />
+      <ReviewModal isOpen={isReviewModalOpen} onClose={closeReviewModal} onSave={saveReview} />
     </div>
+    
   );
 };
 

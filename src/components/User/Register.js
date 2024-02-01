@@ -11,10 +11,23 @@ const Register = () => {
         Email: username,
         Password:password,
       });
+      console.log(response)
       window.location.href= "/login";
       
     } catch (error) {
-      console.error('Registration failed', error);
+      let errorMs = '';
+      error.response.data.errors?.Email?.forEach(element => {
+        errorMs += element + '\n'
+      });
+      if(errorMs){
+        alert("Rejestracja nie udała się: " + errorMs)
+        return;
+      }
+      error.response?.data?.forEach(element => {
+        errorMs += element?.description + '\n'
+      });
+      alert("Rejestracja nie udała się: " + errorMs)
+      console.log(error)
     }
   };
 

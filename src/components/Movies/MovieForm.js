@@ -6,6 +6,7 @@ import AddMovieVersionButton from './AddMovieVersionButton.js';
 import { useParams } from 'react-router-dom';
 import CommentModal from './CommentModal';
 import ReviewModal from './ReviewModal';
+import API_URL from '../Global/config.js';
 const MovieForm = ({mode}) => {
   const { id } = useParams();
   const [title, setTitle] = useState('');
@@ -24,6 +25,9 @@ const MovieForm = ({mode}) => {
   const [movieReviewToRemove, setMovieReviewToRemove] = useState([])
   const [directorName, setDirectorName] = useState('')
   const handleAddMovie = async () => {
+    console.log(title)
+    console.log(description)
+    console.log(directorId)
     if (title && description && directorId) {
       const newMovie = {
         "description": description,
@@ -33,8 +37,17 @@ const MovieForm = ({mode}) => {
         "ReviewsToAdd" : reviewsToAdd,
         "CommnetToAdd":movieCommentsToAdd
        };
-      const response = await axios.post('https://localhost:44389/Movie/create', newMovie);
-      window.location.href= "/movies";
+       const jwtToken = sessionStorage.getItem('kinoToken')
+       const axiosInstance = axios.create({
+        baseURL: API_URL,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwtToken}`,
+        },
+      });
+      await axiosInstance.post('Movie/create',newMovie).then(response => window.location.href= `/movies/${response.data}`)
+      //const response = await axios.post('https://localhost:44389/Movie/create', newMovie);
+      //window.location.href= `/movies/${response}`;
     } else {
       alert('Wypełnij tutuł i reżysera');
     }
@@ -68,7 +81,16 @@ const MovieForm = ({mode}) => {
         return;
       }
       try {
-        const response = await axios.get(`https://localhost:44389/Movie/movie/${id}` );
+        const jwtToken = sessionStorage.getItem('kinoToken')
+       const axiosInstance = axios.create({
+        baseURL: API_URL,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwtToken}`,
+        },
+      });
+      
+        const response = await axiosInstance.get(`https://localhost:44389/Movie/movie/${id}`);
         console.log(response)
         setTitle(response.data.movieTitle)
         setDescripton(response.data.descripition)
@@ -98,13 +120,24 @@ const MovieForm = ({mode}) => {
         "CommentToRemove":movieComentsToRemove,
         "ReviewsToRemove":movieReviewToRemove,
        };
-      const response = await axios.put('https://localhost:44389/Movie/update', newMovie);
+       const jwtToken = sessionStorage.getItem('kinoToken')
+       const axiosInstance = axios.create({
+        baseURL: API_URL,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${jwtToken}`,
+        },
+      });
+      
+      const response = await axiosInstance.put('Movie/update', newMovie);
       window.location.href= `/movies/${id}`;
     } else {
       alert('Wypełnij tutuł i reżysera');
     }
   }
   const handleSelect = (selectedValue) => {
+    console.log('id')
+    console.log(selectedValue)
       setDirector(selectedValue)
     };
   const handleAddMovieVersion = (movieVersion) => {

@@ -14,11 +14,11 @@ const Layout = () => {
           <li className="nav-menu-item">
             <Link to="/directros">Reżyserowie</Link>
           </li>
-          <li className="nav-menu-item">
+          {/* <li className="nav-menu-item">
             <Link to="/movieItems">
               Seanse
             </Link>
-          </li>
+          </li> */}
           <li className="nav-menu-item">
             <Link to="/logout">Wyloguj się</Link>
           </li>

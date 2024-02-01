@@ -52,9 +52,8 @@ const DirectorSelect = ({onSelect, directorName, directorId}) => {
 
   const handleSelect = (e) => {
     console.log(e)
-    const selectedValue = e.value;
-    const name = e.options[e.selectedIndex].text;
-    onSelect(selectedValue, name);
+    const selectedValue = e.target.value;
+    onSelect(selectedValue);
   };
   return (
     <div>

@@ -13,11 +13,11 @@ const Login = () => {
         UserName : username,
         Password:password,
       });
-      console.log(response.data); // Handle success or redirect to home
+      console.log(response); // Handle success or redirect to home
       sessionStorage.setItem('kinoToken', response.data.token);
       window.location.href= "/movies";
     } catch (error) {
-      console.error('Login failed', error);
+      alert("Logowanie nie powiodło się")
     }
   }
 
